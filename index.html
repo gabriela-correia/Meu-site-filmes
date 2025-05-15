@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CinePop</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      font-family: 'Helvetica Neue', sans-serif;
+      height: 100vh;
+      background: url('imagem de fundo.png') no-repeat center center/cover;
+      background-color: #000;
+      color: white;
+      overflow: hidden;
+    }
+
+    header {
+      background-color: #000;
+      padding: 20px 40px;
+      text-align: left;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: white;
+    }
+
+    .slogan {
+      font-size: 12px;
+      color: rgb(243, 18, 18);
+      margin-top: 4px;
+    }
+
+    .overlay {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 60px;
+      background: rgba(0, 0, 0, 0.8);
+      height: calc(100vh - 100px);
+    }
+
+    .content h2, .content h3 {
+      animation-duration: 1.2s;
+      animation-fill-mode: both;
+    }
+
+    .content h2 {
+      font-size: 48px;
+      letter-spacing: 6px;
+      margin-bottom: 10px;
+      animation-name: fadeIn;
+    }
+
+    .content h3 {
+      font-size: 24px;
+      letter-spacing: 4px;
+      margin-bottom: 30px;
+      animation-name: slideIn;
+    }
+
+    button {
+      background-color: white;
+      color: black;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+      animation: pulse 2s infinite;
+    }
+
+    button:hover {
+      background-color: #ddd;
+      transform: scale(1.05);
+    }
+
+    .mockup {
+      max-width: 40%;
+      height: auto;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    /* ANIMAÇÕES */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+   
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="logo">CINEPOP</h1>
+    <p class="slogan">SEU ESPAÇO PARA OS MELHORES FILMES E SÉRIES</p>
+  </header>
+  
+  <main>
+    <div class="overlay">
+      <div class="content">
+        <h2>BEM-VINDO AO</h2>
+        <h3>O UNIVERSO DO CINEMA EM UM CLIQUE </h3>
+        <button onclick="window.location.href='home.html'">CONTINUAR →</button>
+      </div>
+      <img src="imagem de fundo.png" alt="Mockup da plataforma CinePop" class="mockup" />
+    </div>
+  </main>
+</body>
+</html>

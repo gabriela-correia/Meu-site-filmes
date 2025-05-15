@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CinePop</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #000;
+      box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin: 30px auto;
+      width: 100%;
+    }
+
+    .search-container input {
+      width: 60%;
+      max-width: 600px;
+      padding: 14px 20px;
+      border-radius: 30px 0 0 30px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .search-container button {
+      padding: 14px 20px;
+      border-radius: 0 30px 30px 0;
+      border: none;
+      background-color: #fff;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .search-container button:hover {
+      background-color: #ccc;
+    }
+
+    .filmes-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 24px;
+      padding: 30px 40px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .filme {
+      text-align: center;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .filme img {
+      width: 180px;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .filme:hover {
+      transform: scale(1.05);
+    }
+
+    .titulo-filme {
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      padding-top: 60px;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: rgba(0, 0, 0, 0.501);
+      backdrop-filter: blur(10px);
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+      color: #ffffff;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #e50914;
+      font-size: 28px;
+      font-weight: bold;
+      border-bottom: 2px solid #e50914;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .descricao-modal p {
+      margin: 12px 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .descricao-modal p::before {
+      content: "";
+      margin-right: 10px;
+    }
+
+    .descricao-modal p:nth-child(2)::before { content: ""; }
+    .descricao-modal p:nth-child(3)::before { content: ""; }
+    .descricao-modal p:nth-child(4)::before { content: ""; }
+    .descricao-modal p:nth-child(5)::before { content: ""; }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+    }
+.filme img {
+  width: 150px; /* tamanho padrão desktop, pode ajustar */
+  height: auto;
+  transition: width 0.3s ease;
+}
+
+/* Ajuste para telas pequenas (celulares) */
+@media (max-width: 600px) {
+  .filme img {
+    width: 90px; /* tamanho menor para celular */
+  }
+}
+  </style>
+</head>
+<body>
+
+  <header style="display: flex; flex-direction: column; align-items: flex-start; padding: 30px 0 10px 40px;">
+  <div class="logo" style="font-size: 24px; font-weight: bold;">CINEPOP</div>
+
+  <button onclick="history.back()" style="
+    background-color: #fff;
+    color: #000000;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  " onmouseover="this.style.backgroundColor='#c00'; this.style.color='#fff';"
+     onmouseout="this.style.backgroundColor='#fff'; this.style.color='#000';">
+    Voltar
+  </button>
+</header>
+
+
+
+
+ <div class="search-container" style="display: flex; align-items: center; gap: 8px;">
+  <input type="text" id="searchInput" placeholder="Buscar filmes..." onkeyup="buscarFilmes()" />
+
+  <button onclick="buscarFilmes()" style="
+    background: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* sombra leve opcional */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  </button>
+</div>
+
+
+  <section class="filmes-container" id="filmes">
+    <div class="filme" data-filme="elite">
+    <img src="elite.png" alt="Elite">
+    <div class="titulo-filme">Elite</div>
+  </div>
+  
+    <div class="filme" data-filme="emilyinparis">
+    <img src="emily in paris.png" alt="Emily in Paris">
+    <div class="titulo-filme">Emily in Paris</div>
+  </div>
+  
+    <div class="filme" data-filme="greysanatomy">
+    <img src="grey's anatomy.png" alt="Grey's anatomy">
+    <div class="titulo-filme">Grey's anatomy</div>
+  </div>
+
+    <div class="filme" data-filme="lacasadepapel">
+    <img src="la casa de papel.png" alt="La casa de papel">
+    <div class="titulo-filme">La casa de papel</div>
+  </div>
+  
+    <div class="filme" data-filme="odiadochacal">
+    <img src="o dia do chacal.png" alt="O dia do Chacal">
+    <div class="titulo-filme">O dia do Chacal</div>
+  </div>
+
+  
+    <div class="filme" data-filme="overaoquemudouaminhavida">
+    <img src="o verão que mudou a minha vida.png" alt="O verão que mudou a minha vida">
+    <div class="titulo-filme">O verão que mudou a minha vida</div>
+  </div>
+  
+    <div class="filme" data-filme="outerbanks">
+    <img src="outer banks.png" alt="Outer banks">
+    <div class="titulo-filme">Outer banks</div>
+  </div>
+  
+    <div class="filme" data-filme="rebelde">
+    <img src="rebelde.png" alt="Rebelde">
+    <div class="titulo-filme">Rebelde</div>
+  </div>
+  
+    <div class="filme" data-filme="sintonia">
+    <img src="sintonia.png" alt="Sintonia">
+    <div class="titulo-filme">Sintonia</div>
+  </div>
+
+    <div class="filme" data-filme="strangerthings">
+    <img src="strin.png" alt="Stranger things">
+    <div class="titulo-filme">Stranger things</div>
+  </div>
+  
+    <div class="filme" data-filme="oagentenoturno">
+    <img src="agente noturno.jpg" alt="O agente noturno">
+    <div class="titulo-filme">O agente noturno</div>
+  </div>
+  
+    <div class="filme" data-filme="bandidos">
+    <img src="bandidos.jpg" alt="Bandidos">
+    <div class="titulo-filme">Bandidos</div>
+  </div>
+  
+    <div class="filme" data-filme="bridgerton">
+    <img src="bridgerton.jpg" alt="Bridgerton">
+    <div class="titulo-filme">Bridgerton</div>
+  </div>
+
+    <div class="filme" data-filme="cobrakai">
+    <img src="cobra kai.jpg" alt="Cobra Kai">
+    <div class="titulo-filme">Cobra Kai</div>
+  </div>
+
+    
+    <div class="filme" data-filme="euphoria">
+    <img src="euphoria.jpg" alt="Euphoria">
+    <div class="titulo-filme">Euphoria</div>
+  </div>
+
+    
+    <div class="filme" data-filme="osescolhidos">
+    <img src="os escolhidos.jpg" alt="Os escolhidos">
+    <div class="titulo-filme">Os escolhidos</div>
+  </div>
+
+
+    <div class="filme" data-filme="peakyblinders">
+    <img src="peaky blinders.jpg" alt="Peaky blinders">
+    <div class="titulo-filme">Peaky blinders</div>
+  </div>
+
+    <div class="filme" data-filme="percyjackson">
+    <img src="percy.jpg" alt="Percy Jackson">
+    <div class="titulo-filme">Percy Jackson</div>
+  </div>
+
+    <div class="filme" data-filme="pretendetesupresa">
+    <img src="pretendete supresa.jpg" alt="pretendete supresa">
+    <div class="titulo-filme">pretendete supresa</div>
+  </div>
+
+
+    <div class="filme" data-filme="suits">
+    <img src="suits.jpg" alt="Suits">
+    <div class="titulo-filme">Suits</div>
+  </div>
+
+    <div class="filme" data-filme="wandinha">
+    <img src="wandinha.jpg" alt="wandinha">
+    <div class="titulo-filme">wandinha</div>
+  </div>
+
+
+    <div class="filme" data-filme="orecruta">
+    <img src="recruta.jpg" alt="O recruta">
+    <div class="titulo-filme">O recruta</div>
+  </div>
+
+    <div class="filme" data-filme="riverdale">
+    <img src="riverdale.jpg" alt="Riverdale">
+    <div class="titulo-filme">Riverdale</div>
+  </div>
+    <div class="filme" data-filme="voce">
+    <img src="you.jpg" alt="você">
+    <div class="titulo-filme">você</div>
+  </div>
+
+  <div class="filme" data-filme="virginriver">
+  <img src="virgin river.png" alt="Virgin River">
+  <div class="titulo-filme">Virgin River</div>
+</div>
+
+<div class="filme" data-filme="belezaverdadeira">
+  <img src="beleza verdadeira.png" alt="Beleza Verdadeira">
+  <div class="titulo-filme">Beleza Verdadeira</div>
+</div>
+
+<div class="filme" data-filme="quandootelefonetoca">
+  <img src="quando o telefone toca.png" alt="Quando o Telefone Toca">
+  <div class="titulo-filme">Quando o Telefone Toca</div>
+</div>
+
+<div class="filme" data-filme="umaadvogadaextraordinaria">
+  <img src="uma advogada extraordinaria.png" alt="Uma Advogada Extraordinária">
+  <div class="titulo-filme">Uma Advogada Extraordinária</div>
+</div>
+
+<div class="filme" data-filme="lacasadepapelberlim">
+  <img src="berlim.png" alt="La Casa de Papel: Berlim">
+  <div class="titulo-filme">La Casa de Papel: Berlim</div>
+</div>
+
+<div class="filme" data-filme="succession">
+  <img src="sucesson.png" alt="Succession">
+  <div class="titulo-filme">Succession</div>
+</div>
+
+<div class="filme" data-filme="visavis">
+  <img src="vis a vis.png" alt="Vis a Vis">
+  <div class="titulo-filme">Vis a Vis</div>
+</div>
+
+<div class="filme" data-filme="lupin">
+  <img src="lupin.png" alt="Lupin">
+  <div class="titulo-filme">Lupin</div>
+</div>
+
+<div class="filme" data-filme="irmaosdeguerra">
+  <img src="irmãos de guerra.png" alt="Irmãos de Guerra">
+  <div class="titulo-filme">Irmãos de Guerra</div>
+</div>
+
+<div class="filme" data-filme="breakingbad">
+  <img src="breakinh bad.png" alt="Breaking Bad">
+  <div class="titulo-filme">Breaking Bad</div>
+</div>
+
+<div class="filme" data-filme="bluey">
+  <img src="bluey.png" alt="Bluey">
+  <div class="titulo-filme">Bluey</div>
+</div>
+
+<div class="filme" data-filme="friends">
+  <img src="friends.png" alt="Friends">
+  <div class="titulo-filme">Friends</div>
+</div>
+
+<div class="filme" data-filme="icarly">
+  <img src="icarly.png" alt="iCarly">
+  <div class="titulo-filme">iCarly</div>
+</div>
+
+<div class="filme" data-filme="samecat">
+  <img src="sam e cat.png" alt="Sam e Cat">
+  <div class="titulo-filme">Sam e Cat</div>
+</div>
+
+<div class="filme" data-filme="thethundermans">
+  <img src="the thundermans.png" alt="The Thundermans">
+  <div class="titulo-filme">The Thundermans</div>
+</div>
+
+<div class="filme" data-filme="henrydanger">
+  <img src="henry danger.png" alt="Henry Danger">
+  <div class="titulo-filme">Henry Danger</div>
+</div>
+
+<div class="filme" data-filme="yellowstone">
+  <img src="yellowstone.png" alt="Yellowstone">
+  <div class="titulo-filme">Yellowstone</div>
+</div>
+
+<div class="filme" data-filme="obomdoutor">
+  <img src="o bom doutor.png" alt="O Bom Doutor">
+  <div class="titulo-filme">O Bom Doutor</div>
+</div>
+
+
+
+  </section>
+  
+
+  <!-- Modal -->
+<div id="modalDescricao" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharModal()">&times;</span>
+    <h2 id="tituloModal"></h2>
+    <p><strong>Descrição:</strong> <span id="descricaoModal"></span></p>
+    <p><strong>Ano:</strong> <span id="anoModal"></span></p>
+    <p><strong>Diretor:</strong> <span id="diretorModal"></span></p>
+    <p><strong>Gênero:</strong> <span id="generoModal"></span></p>
+    <iframe id="trailerModal" src="" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+
+
+  
+<script>
+  const filmesInfo = {
+
+    elite: {
+    titulo: "Elite",
+    descricao: "Três adolescentes recebem bolsas para estudar em uma escola de elite na Espanha, mas o choque entre classes leva a um assassinato.",
+    ano: "2018",
+    diretor: "Carlos Montero, Darío Madrona",
+    genero: "Drama / Suspense / Crime",
+    trailer: "https://www.youtube.com/embed/QNwhAdrdwp0"
+  },
+  emilyinparis: {
+    titulo: "Emily in Paris",
+    descricao: "Emily se muda de Chicago para Paris para uma oportunidade de trabalho e enfrenta choques culturais e romances inesperados.",
+    ano: "2020",
+    diretor: "Darren Star",
+    genero: "Comédia / Drama / Romance",
+    trailer: "https://www.youtube.com/embed/lptctjAT-Mk"
+  },
+  greysanatomy: {
+    titulo: "Grey's Anatomy",
+    descricao: "Acompanhe a vida profissional e pessoal de cirurgiões em um hospital fictício de Seattle.",
+    ano: "2005",
+    diretor: "Shonda Rhimes",
+    genero: "Drama / Médico / Romance",
+    trailer: "https://www.youtube.com/embed/6o21XRzqRe8"
+},
+  lacasadepapel: {
+    titulo: "La Casa de Papel",
+    descricao: "Um grupo de criminosos realiza o maior assalto da história sob o comando do enigmático Professor.",
+    ano: "2017",
+    diretor: "Álex Pina",
+    genero: "Crime / Drama / Suspense",
+    trailer: "https://youtu.be/AO5rMKacXGs?si=V5FE3fh94lMY9bTc"
+  },
+ odiadochacal: {
+    titulo: "O Dia do Chacal",
+    descricao: "Um assassino profissional é contratado para matar o presidente francês Charles de Gaulle.",
+    ano: "1973",
+    diretor: "Fred Zinnemann",
+    genero: "Suspense / Crime / Drama",
+    trailer: "https://www.youtube.com/embed/k-vKhJ_rD2Y"
+},
+  overaoquemudouaminhavida: {
+    titulo: "O Verão que Mudou a Minha Vida",
+    descricao: "Durante as férias de verão, uma jovem descobre o amor e verdades familiares.",
+    ano: "2022",
+    diretor: "Jenny Han",
+    genero: "Drama / Romance",
+    trailer: "https://www.youtube.com/embed/7iWVe6Vf0Os"
+},
+  outerbanks: {
+    titulo: "Outer Banks",
+    descricao: "Um grupo de adolescentes se envolve em uma caça ao tesouro enquanto lida com conflitos entre grupos sociais opostos.",
+    ano: "2020",
+    diretor: "Josh Pate, Jonas Pate, Shannon Burke",
+    genero: "Aventura / Mistério / Drama",
+    trailer: "https://www.youtube.com/embed/GC68w9tvv6I"
+  },
+  rebelde: {
+    titulo: "Rebelde",
+    descricao: "Estudantes de um colégio de elite vivem romances, intrigas e formam uma banda de sucesso.",
+    ano: "2004",
+    diretor: "Pedro Damián",
+    genero: "Drama / Musical / Romance",
+    trailer: "https://www.youtube.com/embed/d-KmC6mhF1A"
+  },
+  sintonia: {
+    titulo: "Sintonia",
+    descricao: "Três amigos de infância enfrentam caminhos diferentes em meio ao tráfico, funk e fé nas periferias de São Paulo.",
+    ano: "2019",
+    diretor: "KondZilla, Felipe Braga, Guilherme Quintella",
+    genero: "Drama / Crime",
+    trailer: "https://www.youtube.com/embed/jm3YtmNPvjE"
+  },
+  strangerthings: {
+    titulo: "Stranger Things",
+    descricao: "Um grupo de crianças enfrenta eventos sobrenaturais após o desaparecimento de um amigo.",
+    ano: "2016",
+    diretor: "The Duffer Brothers",
+    genero: "Ficção Científica / Terror / Aventura",
+    trailer: "https://www.youtube.com/embed/mnd7sFt5c3A"
+  },
+ 
+    oagentenoturno: {
+    titulo: "O Agente Noturno",
+    descricao: "Um agente do FBI trabalha no turno da noite atendendo uma linha de emergência que envolve conspirações governamentais.",
+    ano: "2023",
+    diretor: "Shawn Ryan",
+    genero: "Ação / Suspense / Espionagem",
+    trailer: "https://www.youtube.com/embed/YDbnY9Obsfs"
+  },
+  bandidos: {
+    titulo: "Bandidos",
+    descricao: "Uma série sobre criminosos que planejam roubos ousados no México, com muita ação e reviravoltas.",
+    ano: "2024",
+    diretor: "Adrián Grunberg",
+    genero: "Ação / Crime / Drama",
+    trailer: "https://www.youtube.com/embed/1Gp9w1uN1nU"
+  },
+  bridgerton: {
+    titulo: "Bridgerton",
+    descricao: "Durante a era da Regência em Londres, famílias nobres buscam prestígio social através de casamentos e intrigas.",
+    ano: "2020",
+    diretor: "Chris Van Dusen",
+    genero: "Drama / Romance / Época",
+    trailer: "https://www.youtube.com/embed/pxMyHXSQIWw"
+  },
+  cobrakai: {
+    titulo: "Cobra Kai",
+    descricao: "Anos após os eventos de 'Karatê Kid', Johnny Lawrence reabre o dojo Cobra Kai, reacendendo sua rivalidade com Daniel LaRusso.",
+    ano: "2018",
+    diretor: "Josh Heald, Jon Hurwitz, Hayden Schlossberg",
+    genero: "Ação / Drama / Artes Marciais",
+    trailer: "https://www.youtube.com/embed/xCwwxNbtK6Y"
+  },
+  euphoria: {
+    titulo: "Euphoria",
+    descricao: "A vida de adolescentes marcada por problemas com drogas, identidade, traumas e relacionamentos complexos.",
+    ano: "2019",
+    diretor: "Sam Levinson",
+    genero: "Drama / Adolescente / Psicológico",
+    trailer: "https://www.youtube.com/embed/vA7F2aKzGHU"
+  },
+  impuros: {
+    titulo: "Impuros",
+    descricao: "Rio de Janeiro dos anos 90: um jovem de classe média entra para o tráfico e ascende como chefe do crime.",
+    ano: "2018",
+    diretor: "Tomás Portella, René Sampaio",
+    genero: "Crime / Drama / Ação",
+    trailer: "https://www.youtube.com/embed/zHSTiY0CDx0"
+  },
+  osescolhidos: {
+    titulo: "Os Escolhidos",
+    descricao: "Pessoas desaparecem misteriosamente em uma cidade mexicana. Um grupo busca respostas sobre forças sobrenaturais.",
+    ano: "2023",
+    diretor: "Joaquín Górriz",
+    genero: "Ficção / Mistério / Drama",
+    trailer: "https://www.youtube.com/embed/R4m5AulB2M0"
+  },
+  peakyblinders: {
+    titulo: "Peaky Blinders",
+    descricao: "A história de uma gangue britânica liderada por Tommy Shelby após a Primeira Guerra Mundial.",
+    ano: "2013",
+    diretor: "Steven Knight",
+    genero: "Crime / Drama / Histórico",
+    trailer: "https://www.youtube.com/embed/oVzVdvGIC7U"
+  },
+  percyjackson: {
+    titulo: "Percy Jackson e os Olimpianos",
+    descricao: "Percy descobre ser um semideus, filho de Poseidon, e embarca em aventuras com outros heróis mitológicos.",
+    ano: "2023",
+    diretor: "Rick Riordan (produção), Dan Shotz",
+    genero: "Fantasia / Aventura / Mitologia",
+    trailer: "https://www.youtube.com/embed/Yh4Aal5Voug"
+  },
+  pretendetesupresa: {
+    titulo: "Pretendente Surpresa",
+    descricao: "Uma mulher contrata um ator para fingir ser seu namorado durante uma festa familiar.",
+    ano: "2022",
+    diretor: "Jeff Lowell",
+    genero: "Comédia Romântica",
+    trailer: "https://www.youtube.com/embed/5sZ6YfE0W_s"
+  },
+  suits: {
+    titulo: "Suits",
+    descricao: "Um advogado brilhante contrata um jovem com memória fotográfica — que nunca cursou Direito — para trabalhar com ele.",
+    ano: "2011",
+    diretor: "Aaron Korsh",
+    genero: "Drama / Jurídico / Comédia",
+    trailer: "https://www.youtube.com/embed/85z53bAebsI"
+  },
+  wandinha: {
+    titulo: "Wandinha",
+    descricao: "Wandinha Addams estuda em uma escola para jovens com dons sobrenaturais e investiga assassinatos misteriosos.",
+    ano: "2022",
+    diretor: "Tim Burton",
+    genero: "Fantasia / Mistério / Comédia Sombria",
+    trailer: "https://www.youtube.com/embed/Di310WS8zLk"
+  },
+  orecruta: {
+    titulo: "O Recruta",
+    descricao: "Um advogado da CIA se envolve em missões perigosas após descobrir uma carta ameaçadora escrita por uma ex-informante.",
+    ano: "2022",
+    diretor: "Alexi Hawley",
+    genero: "Ação / Espionagem / Comédia",
+    trailer: "https://www.youtube.com/embed/VxTygfG3lFs"
+  },
+  riverdale: {
+    titulo: "Riverdale",
+    descricao: "Adolescentes de uma cidade aparentemente tranquila desvendam mistérios sombrios após a morte de um colega.",
+    ano: "2017",
+    diretor: "Roberto Aguirre-Sacasa",
+    genero: "Drama / Mistério / Adolescente",
+    trailer: "https://www.youtube.com/embed/HxtLlByaYTc"
+  },
+  voce: {
+    titulo: "Você (You)",
+    descricao: "Um homem obsessivo persegue mulheres pelas redes sociais, levando seu amor a extremos perigosos.",
+    ano: "2018",
+    diretor: "Greg Berlanti, Sera Gamble",
+    genero: "Suspense / Psicológico / Romance",
+    trailer: "https://www.youtube.com/embed/xAN1ThhTWsE"
+  },
+
+  virginriver: {
+  titulo: "Virgin River",
+  descricao: "Uma enfermeira se muda para uma cidade remota na Califórnia em busca de um novo começo, mas descobre que a vida lá não é tão simples quanto esperava.",
+  ano: "2019",
+  diretor: "Sue Tenney",
+  genero: "Drama / Romance",
+  trailer: "https://www.youtube.com/embed/DMNzW8tmGUk"
+},
+
+belezaverdadeira: {
+  titulo: "Beleza Verdadeira",
+  descricao: "Uma jovem com baixa autoestima aprende a se valorizar após esconder sua aparência com maquiagem e conquistar novos relacionamentos.",
+  ano: "2020",
+  diretor: "Kim Sang Hyub",
+  genero: "Comédia / Romance / Drama",
+  trailer: "https://www.youtube.com/embed/Gx7F2iRN9ac"
+},
+
+quandootelefonetoca: {
+  titulo: "Quando o Telefone Toca",
+  descricao: "Pessoas recebem ligações do futuro com informações sobre suas mortes iminentes, desencadeando mistérios e dilemas morais.",
+  ano: "2021",
+  diretor: "Lee Chung-hyun",
+  genero: "Suspense / Mistério / Ficção Científica",
+  trailer: "https://www.youtube.com/embed/fkmtv02fE5k"
+},
+
+umaadvogadaextraordinaria: {
+  titulo: "Uma Advogada Extraordinária",
+  descricao: "Uma jovem advogada brilhante com autismo enfrenta os desafios do mundo jurídico e da vida pessoal.",
+  ano: "2022",
+  diretor: "Yoo In-shik",
+  genero: "Drama / Jurídico",
+  trailer: "https://www.youtube.com/embed/Pa3o2Z-B58k"
+},
+
+lacasadepapelberlim: {
+  titulo: "La Casa de Papel: Berlim",
+  descricao: "Spin-off de La Casa de Papel, a série acompanha Berlim em um de seus maiores roubos antes dos eventos da série original.",
+  ano: "2023",
+  diretor: "Álex Pina",
+  genero: "Ação / Crime / Drama",
+  trailer: "https://www.youtube.com/embed/TkTVF4AyYTg"
+},
+
+succession: {
+  titulo: "Succession",
+  descricao: "Uma poderosa família luta pelo controle de um império midiático enquanto enfrenta traições, manipulações e disputas internas.",
+  ano: "2018",
+  diretor: "Jesse Armstrong",
+  genero: "Drama / Satírico",
+  trailer: "https://www.youtube.com/embed/K9d8Yd3gIEU"
+},
+
+visavis: {
+  titulo: "Vis a Vis",
+  descricao: "Uma mulher inocente vai parar em uma prisão feminina e precisa aprender a sobreviver em meio à corrupção e violência.",
+  ano: "2015",
+  diretor: "Álex Pina",
+  genero: "Drama / Crime / Thriller",
+  trailer: "https://www.youtube.com/embed/iW2pXAU38uA"
+},
+
+lupin: {
+  titulo: "Lupin",
+  descricao: "Inspirado nas aventuras de Arsène Lupin, um ladrão mestre busca vingança contra uma família poderosa por uma injustiça do passado.",
+  ano: "2021",
+  diretor: "George Kay",
+  genero: "Suspense / Ação / Mistério",
+  trailer: "https://www.youtube.com/embed/ga0iTWXCGa0"
+},
+
+irmaosdeguerra: {
+  titulo: "Irmãos de Guerra",
+  descricao: "A minissérie segue a trajetória real de soldados da Segunda Guerra Mundial desde o treinamento até batalhas decisivas na Europa.",
+  ano: "2001",
+  diretor: "Tom Hanks, Steven Spielberg",
+  genero: "Guerra / Drama / História",
+  trailer: "https://www.youtube.com/embed/KKRBAFlZL74"
+},
+
+breakingbad: {
+  titulo: "Breaking Bad",
+  descricao: "Um professor de química se transforma em fabricante de metanfetamina após ser diagnosticado com câncer, entrando no mundo do crime.",
+  ano: "2008",
+  diretor: "Vince Gilligan",
+  genero: "Crime / Drama / Thriller",
+  trailer: "https://www.youtube.com/embed/HhesaQXLuRY"
+},
+
+bluey: {
+  titulo: "Bluey",
+  descricao: "Bluey é uma adorável cadelinha azul que vive aventuras educativas com sua família, promovendo o aprendizado por meio da brincadeira.",
+  ano: "2018",
+  diretor: "Joe Brumm",
+  genero: "Animação / Infantil / Família",
+  trailer: "https://www.youtube.com/embed/4SKEdW9V54U"
+},
+
+friends: {
+  titulo: "Friends",
+  descricao: "Seis amigos vivem altos e baixos da vida adulta em Nova York, com muito humor e momentos inesquecíveis.",
+  ano: "1994",
+  diretor: "David Crane, Marta Kauffman",
+  genero: "Comédia / Romance",
+  trailer: "https://www.youtube.com/embed/hDNNmeeJs1Q"
+},
+
+icarly: {
+  titulo: "iCarly",
+  descricao: "Carly e seus amigos criam um webshow de sucesso enquanto enfrentam as loucuras da adolescência.",
+  ano: "2007",
+  diretor: "Dan Schneider",
+  genero: "Comédia / Adolescente",
+  trailer: "https://www.youtube.com/embed/GPegzI4hZiY"
+},
+
+samecat: {
+  titulo: "Sam e Cat",
+  descricao: "Sam e Cat se unem para abrir um serviço de babás, vivendo situações engraçadas e caóticas.",
+  ano: "2013",
+  diretor: "Dan Schneider",
+  genero: "Comédia / Família",
+  trailer: "https://www.youtube.com/embed/Xrw9OdOzRU8"
+},
+
+thethundermans: {
+  titulo: "The Thundermans",
+  descricao: "Uma família de super-heróis tenta viver uma vida normal enquanto esconde seus poderes e enfrenta vilões.",
+  ano: "2013",
+  diretor: "Jed Spingarn",
+  genero: "Comédia / Ação / Família",
+  trailer: "https://www.youtube.com/embed/HHbKqQjAeY0"
+},
+
+henrydanger: {
+  titulo: "Henry Danger",
+  descricao: "Henry é um garoto comum que vira o ajudante secreto de um super-herói, tentando equilibrar sua vida dupla.",
+  ano: "2014",
+  diretor: "Dan Schneider, Dana Olsen",
+  genero: "Ação / Comédia / Aventura",
+  trailer: "https://www.youtube.com/embed/9AM3UAvyq9I"
+},
+
+yellowstone: {
+  titulo: "Yellowstone",
+  descricao: "A família Dutton luta para proteger seu rancho contra forças políticas e econômicas, em uma história intensa no Velho Oeste moderno.",
+  ano: "2018",
+  diretor: "Taylor Sheridan",
+  genero: "Drama / Faroeste / Crime",
+  trailer: "https://www.youtube.com/embed/ELoHcyGkG1k"
+},
+
+obomdoutor: {
+  titulo: "O Bom Doutor",
+  descricao: "Shaun Murphy, um jovem cirurgião com autismo e síndrome de savant, enfrenta desafios na medicina e na vida pessoal.",
+  ano: "2017",
+  diretor: "David Shore",
+  genero: "Drama / Médico",
+  trailer: "https://www.youtube.com/embed/msJggy8xtmI"
+}
+
+
+
+};
+ 
+  
+
+  document.querySelectorAll('.filme').forEach(filme => {
+    filme.addEventListener('click', function() {
+      const key = this.getAttribute('data-filme');
+      const info = filmesInfo[key];
+  
+      if (info) {
+        document.getElementById('tituloModal').textContent = info.titulo;
+        document.getElementById('descricaoModal').textContent = info.descricao;
+        document.getElementById('anoModal').textContent = info.ano;
+        document.getElementById('diretorModal').textContent = info.diretor;
+        document.getElementById('generoModal').textContent = info.genero;
+        document.getElementById('trailerModal').src = info.trailer;
+  
+        document.getElementById('modalDescricao').style.display = 'block';
+      }
+    });
+  });
+  
+  function fecharModal() {
+    document.getElementById('modalDescricao').style.display = 'none';
+    document.getElementById('trailerModal').src = ""; // Para parar o vídeo
+  }
+  
+  // Fechar clicando fora do modal
+  window.onclick = function(event) {
+    const modal = document.getElementById('modalDescricao');
+    if (event.target == modal) {
+      fecharModal();
+    }
+  }
+
+  function buscarFilmes() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const filmes = document.querySelectorAll('.filme');
+  
+      filmes.forEach(filme => {
+        const titulo = filme.querySelector('.titulo-filme').textContent.toLowerCase();
+        if (titulo.includes(input)) {
+          filme.style.display = "block";
+        } else {
+          filme.style.display = "none";
+        }
+      });
+    }
+  </script>
+  
+</body>
+</html>

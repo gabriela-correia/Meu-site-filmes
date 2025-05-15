@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CinePop</title>
+  <link rel="stylesheet" href="style2.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      color: white;
+      background-color: #000;
+      background-image: url('imagem.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      height: 100vh;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(0, 0, 0, 0.6);
+      position: fixed;
+      width: 100%;
+      z-index: 2;
+      top: 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .logo span {
+      font-size: 0.7rem;
+      color: rgb(243, 18, 18);
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+      margin-left: auto;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #ff4d4d;
+    }
+
+    .search-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 2rem;
+}
+
+.search-input {
+  padding: 0.8rem 1.2rem;
+  border: 2px solid #555;
+  border-radius: 25px;
+  background-color: #222;
+  color: white;
+  width: 200px;
+  transition: width 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 10px 2px rgb(225, 68, 68);
+  width: 250px;
+}
+
+.search-btn {
+  background: #444;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0.7rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Efeito ao passar o mouse sobre o botão */
+.search-btn:hover {
+  background: #ff4d4d;
+  transform: scale(1.1); /* Aumenta o botão ligeiramente */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra mais forte */
+}
+
+/* Efeito quando o botão é pressionado */
+.search-btn:active {
+  background: #e60000; /* Cor mais intensa quando pressionado */
+  transform: scale(1); /* Retorna ao tamanho original */
+}
+
+
+
+    .banner {
+      height: 100vh;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+      padding: 5rem 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 1;
+      text-align: left;
+    }
+
+    .banner-content h1 {
+      font-size: 3rem;
+      font-family: 'Orbitron', sans-serif;
+      line-height: 1;
+    }
+
+    .banner-content h1 span {
+      display: block;
+      font-size: 4rem;
+    }
+
+    .info {
+      margin: 1rem 0;
+      color: #ad1717;
+    }
+
+    .ano {
+      color: #ccc(255, 70, 70);
+    }
+
+    .btns {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .play-btn, .add-btn {
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .play-btn {
+      background: rgb(240, 237, 237);
+      color: black;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      background: rgba(245, 240, 240, 0.1);
+      color: white;
+      border: 2px solid white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+
+    .add-btn:hover {
+      background: rgba(129, 120, 120, 0.271);
+    }
+
+    .minha-lista {
+      padding: 3rem 2rem;
+      background-color: #000;
+      text-align: left;
+    }
+
+    .minha-lista h2 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      border-left: 5px solid #dc0f0f;
+      padding-left: 1rem;
+    }
+
+    .carrossel {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+
+    .carrossel::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .carrossel::-webkit-scrollbar-thumb {
+      background-color: #000000;
+      border-radius: 4px;
+    }
+
+    .carrossel img {
+      width: 150px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .carrossel img:hover {
+      transform: scale(1.05);
+    }
+
+    .item {
+      text-align: center;
+      color: white;
+    }
+
+    .item p.titulo {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+      background-color: #ffffffed;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #444;
+      width: 80%;
+      max-width: 400px;
+      color: rgb(0, 0, 0);
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ff0000ca;
+      text-align: center;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: white;
+    }
+
+    /* Interatividade para o título do Capitão América */
+
+
+/* Animação de entrada suave para os títulos */
+@keyframes slideInTitle {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animação de entrada suave para o menu */
+@keyframes slideInNav {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animação para os itens da lista */
+@keyframes slideInItem {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Aplicar no título Capitão América */
+.banner-content h1 {
+  animation: slideInTitle 3s ease-out forwards;
+}
+
+/* NÃO aplicar animação no CINEPOP (logo) */
+/* .logo { // deixa sem nada por enquanto } */
+
+/* Aplicar animação no menu HOME, FILMES e SÉRIES */
+.navbar a {
+  animation: slideInNav 1s ease-out forwards;
+}
+
+/* Pequeno atraso para cada item do menu */
+.navbar a:nth-child(1) {
+  animation-delay: 0.3s;
+}
+.navbar a:nth-child(2) {
+  animation-delay: 0.5;
+}
+.navbar a:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+/* Aplicar animação nos itens dos carrosseis */
+.carrossel .item {
+  opacity: 0; /* Começar invisível */
+  transform: translateX(100px); /* Começar à direita */
+  transition: all 1s ease-out;
+}
+
+.carrossel .item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Atraso para cada item do carrossel aparecer sequencialmente */
+.carrossel .item:nth-child(1) {
+  transition-delay: 0.1s; /*0.2*/
+}
+.carrossel .item:nth-child(2) {
+  transition-delay: 0.3s; /*0.4*/
+}
+.carrossel .item:nth-child(3) {
+  transition-delay: 0.5s; /*0.6*/
+}
+.carrossel .item:nth-child(4) {
+  transition-delay: 0.7s; /*0.8*/
+}
+.carrossel .item:nth-child(5) {
+  transition-delay: 1s; /*1*/
+}
+.carrossel .item:nth-child(6) {
+  transition-delay: 1.1s; /*1.2*/
+}
+.carrossel .item:nth-child(7) {
+  transition-delay: 1.3s; /*1.4*/
+}
+.carrossel .item:nth-child(8) {
+  transition-delay: 1.5s; /*1.6*/
+}
+.carrossel .item:nth-child(9) {
+  transition-delay: 1.7s; /*1.8*/
+}
+.carrossel .item:nth-child(10) {
+  transition-delay: 1.9s; /*2*/
+}
+
+/* Para telas menores que 600px (exemplo para celular) */
+@media (max-width: 600px) {
+  /* Diminuir tamanho das imagens do carrossel */
+  .carrossel img {
+    width: 100px;
+    height: 150px;
+  }
+
+   .titulo-filme {
+    font-size: 1rem; /* diminui o tamanho da fonte */
+  }
+
+  /* Diminuir tamanho dos títulos dos filmes */
+  .carrossel .titulo {
+    font-size: 0.7rem;
+  }
+
+  /* Diminuir tamanho do título "Minha lista" */
+  .minha-lista h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Diminuir tamanho dos links do menu nav (Home, Filmes, Séries) */
+  nav a {
+    font-size: 0.8rem;
+  }
+
+  /* Diminuir tamanho do logo */
+  .logo {
+    font-size: 1rem;
+  }
+}
+
+
+/* e assim por diante, conforme o número de itens */
+ 
+  </style>
+</head>
+<body>
+  <header class="top-nav">
+    <div class="logo">CINEPOP<br></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="filmes.html">Filmes</a>
+      <a href="series.html">Séries</a>
+    </nav>
+    
+   
+    
+  </header>
+
+  <main class="banner">
+    <div class="banner-content">
+      <h1>CAPITÃO AMÉRICA:<br><span>O PRIMEIRO VINGADOR</span></h1>
+      
+      <!-- MODAL -->
+      <div class="btns">
+        <button class="play-btn">Descrição</button>
+        
+      </div>
+
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="fecharModal">&times;</span>
+    <h3>Capitão América: <br> O Primeiro Vingador</h3><br>
+    <p>
+      Durante a Segunda Guerra Mundial, o jovem Steve Rogers é transformado em um supersoldado, tornando-se o herói Capitão América. Ele luta contra o malvado Caveira Vermelha e a organização Hydra, marcando o início de sua jornada como um dos maiores heróis do Universo Marvel.
+    </p>
+  </div>
+</div>
+   
+
+    </div>
+  </main>
+
+<!-- Seção Minha Lista -->
+<section class="minha-lista">
+  <h2>Minha lista</h2>
+  <div class="carrossel" id="carrossel-minha-lista">
+    <div class="item"><img src="Filme ultimato.png" alt="Vingadores: Ultimato"><p class="titulo">Vingadores: Ultimato</p></div>
+    <div class="item"><img src="vingadores guerra infinita.png" alt="Guerra Infinita"><p class="titulo">Guerra Infinita</p></div>
+    <div class="item"><img src="outer banks.png" alt="Outer Banks"><p class="titulo">Outer Banks</p></div>
+    <div class="item"><img src="elite.png" alt="Elite"><p class="titulo">Elite</p></div>
+    <div class="item"><img src="emily in paris.png" alt="Emily in Paris"><p class="titulo">Emily in Paris</p></div>
+    <div class="item"><img src="sintonia.png" alt="Sintonia"><p class="titulo">Sintonia</p></div>
+    <div class="item"><img src="rebelde.png" alt="Rebelde"><p class="titulo">Rebelde</p></div>
+    <div class="item"><img src="la casa de papel.png" alt="La Casa de Papel"><p class="titulo">La Casa de Papel</p></div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Descrição do Filme</h3>
+    <p></p> <!-- Descrição deixada em branco -->
+  </div>
+</div>
+
+<!-- Seção Filmes -->
+<section class="minha-lista">
+  <h2>Filmes</h2>
+  <div class="carrossel" id="carrossel-filmes">
+    <div class="item"><img src="o rei leao.png" alt="O Rei Leão"><p class="titulo">O Rei Leão</p></div>
+    <div class="item"><img src="Filme ultimato.png" alt="Vingadores: Ultimato"><p class="titulo">Vingadores: Ultimato</p></div>
+    <div class="item"><img src="vingadores guerra infinita.png" alt="Guerra Infinita"><p class="titulo">Guerra Infinita</p></div>
+    <div class="item"><img src="a queda.png" alt="A Queda"><p class="titulo">A Queda</p></div>
+    <div class="item"><img src="bad boys 4.png" alt="Bad Boys 4"><p class="titulo">Bad Boys 4</p></div>
+    <div class="item"><img src="culpa mia.png" alt="Culpa Mía"><p class="titulo">Culpa Mía</p></div>
+    <div class="item"><img src="barbie.png" alt="Barbie"><p class="titulo">Barbie</p></div>
+    <div class="item"><img src="Velozes e furiosos 10.png" alt="Velozes e Furiosos 10"><p class="titulo">Velozes e Furiosos 10</p></div>
+    <div class="item"><img src="as patricinhas.png" alt="As Patricinhas"><p class="titulo">As Patricinhas</p></div>
+    <div class="item"><img src="continencia ao amor.png" alt="Continência ao Amor"><p class="titulo">Continência ao Amor</p></div>
+    <div class="item"><img src="garota mimada.png" alt="Garota Mimada"><p class="titulo">Garota Mimada</p></div>
+  </div>
+  </div>
+</section>
+
+<!-- Seção Séries -->
+<section class="minha-lista">
+  <h2>Séries</h2>
+  <div class="carrossel" id="carrossel-series">
+
+    <div class="item"><img src="elite.png" alt="Elite"><p class="titulo">Elite</p></div>
+
+    <div class="item"><img src="emily in paris.png" alt="Emily in Paris"><p class="titulo">Emily in Paris</p></div>
+
+    <div class="item"><img src="la casa de papel.png" alt="La Casa de Papel"><p class="titulo">La Casa de Papel</p></div>
+
+    <div class="item"><img src="o verão que mudou a minha vida.png" alt="O Verão Que Mudou a Minha Vida"><p class="titulo">O Verão Que Mudou a Minha Vida</p></div>
+
+    <div class="item"><img src="outer banks.png" alt="Outer Banks"><p class="titulo">Outer Banks</p></div>
+
+    <div class="item"><img src="rebelde.png" alt="Rebelde"><p class="titulo">Rebelde</p></div>
+    <div class="item"><img src="sintonia.png" alt="Sintonia"><p class="titulo">Sintonia</p></div>  
+
+  <div class="item"><img src="strin.png" alt="Stranger Things"><p class="titulo">Stranger Things</p></div>
+
+    <div class="item"><img src="agente noturno.jpg" alt="Stranger Things"><p class="titulo">o agente noturno</p></div>
+
+    <div class="item"><img src="bandidos.jpg" alt="Stranger Things"><p class="titulo">Bandidos</p></div>
+
+    <div class="item"><img src="bridgerton.jpg" alt="Stranger Things"><p class="titulo">Bridgerton</p></div>
+
+    <div class="item"><img src="cobra kai.jpg" alt="Stranger Things"><p class="titulo">Cobra kai</p></div>
+
+    <div class="item"><img src="euphoria.jpg" alt="Stranger Things"><p class="titulo">Euphoria</p></div>
+
+    <div class="item"><img src="impuros.jpg" alt="Stranger Things"><p class="titulo">Impuros</p></div>
+
+    <div class="item"><img src="os escolhidos.jpg" alt="Stranger Things"><p class="titulo">os escolhidos</p></div>
+
+    <div class="item"><img src="peaky blinders.jpg" alt="Stranger Things"><p class="titulo">Peaky blinders</p></div>
+
+    <div class="item"><img src="percy.jpg" alt="Stranger Things"><p class="titulo">Percy Jackson</p></div>
+
+    <div class="item"><img src="pretendete supresa.jpg" alt="Stranger Things"><p class="titulo">Pretendete supresa</p></div>
+
+    <div class="item"><img src="recruta.jpg" alt="Stranger Things"><p class="titulo">O recruta</p></div>
+
+    <div class="item"><img src="riverdale.jpg" alt="Stranger Things"><p class="titulo">Riverdale</p></div>
+
+    <div class="item"><img src="suits.jpg" alt="Stranger Things"><p class="titulo">Suits</p></div>
+
+    <div class="item"><img src="wandinha.jpg" alt="Stranger Things"><p class="titulo">Wandinha</p></div>
+
+     <div class="item"><img src="you.jpg" alt="Stranger Things"><p class="titulo">Você</p></div>
+
+
+
+</section>
+
+<!-- Seção Mundo Infantil -->
+<section class="minha-lista">
+  <h2>Mundo Infantil</h2>
+  <div class="carrossel" id="carrossel-infantil">
+    <div class="item"><img src="divertidamente.png" alt="Divertidamente"><p class="titulo">Divertidamente</p></div>
+    <div class="item"><img src="elementos.png" alt="Elementos"><p class="titulo">Elementos</p></div>
+    <div class="item"><img src="luca.png" alt="Luca"><p class="titulo">Luca</p></div>
+    <div class="item"><img src="moana.png" alt="Moana"><p class="titulo">Moana</p></div>
+    <div class="item"><img src="procurando nemo.png" alt="Procurando Nemo"><p class="titulo">Procurando Nemo</p></div>
+    <div class="item"><img src="toy strory 4.png" alt="Toy Story 4"><p class="titulo">Toy Story 4</p></div>
+    <div class="item"><img src="bob esponja o incrivel resgate.png" alt="Bob Esponja: O Incrível Resgate"><p class="titulo">Bob Esponja: O Incrível Resgate</p></div>
+    <div class="item"><img src="homem aranha.png" alt="Homem-Aranha"><p class="titulo">Homem-Aranha</p></div>
+    <div class="item"><img src="meu malvado favorito 4.png" alt="Meu Malvado Favorito 4"><p class="titulo">Meu Malvado Favorito 4</p></div>
+    <div class="item"><img src="shrek 2.png" alt="Shrek 2"><p class="titulo">Shrek 2</p></div>
+  </div>
+</section>
+
+ 
+ <script>
+  const items = document.querySelectorAll('.carrossel .item');
+
+  // Função para verificar se o item está na tela
+  function checkVisibility() {
+    items.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+        item.classList.add('visible');
+      }
+    });
+  }
+
+  // Chama a função de verificação assim que a página carrega
+  window.addEventListener('load', checkVisibility);
+
+  // Chama a função de verificação quando o usuário rolar a página
+  window.addEventListener('scroll', checkVisibility);
+
+  const modal = document.getElementById("modal");
+    const btn = document.querySelector(".play-btn");
+    const span = document.querySelector(".close");
+
+    btn.onclick = () => modal.style.display = "block";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = e => {
+      if (e.target == modal) modal.style.display = "none";
+    };
+
+
+</script>
+
+</body>
+</html>

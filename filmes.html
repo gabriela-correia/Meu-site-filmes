@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CinePop</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #000;
+      box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin: 30px auto;
+      width: 100%;
+    }
+
+    .search-container input {
+      width: 60%;
+      max-width: 600px;
+      padding: 14px 20px;
+      border-radius: 30px 0 0 30px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .search-container button {
+      padding: 14px 20px;
+      border-radius: 0 30px 30px 0;
+      border: none;
+      background-color: #fff;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .search-container button:hover {
+      background-color: #ccc;
+    }
+
+    .filmes-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 24px;
+      padding: 30px 40px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .filme {
+      text-align: center;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .filme img {
+      width: 180px;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    .filme:hover {
+      transform: scale(1.05);
+    }
+
+    .titulo-filme {
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      padding-top: 60px;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: rgba(0, 0, 0, 0.501);
+      backdrop-filter: blur(10px);
+      margin: auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 400px;
+      color: #ffffff;
+      box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #e50914;
+      font-size: 28px;
+      font-weight: bold;
+      border-bottom: 2px solid #e50914;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .descricao-modal p {
+      margin: 12px 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .descricao-modal p::before {
+      content: "";
+      margin-right: 10px;
+    }
+
+    .descricao-modal p:nth-child(2)::before { content: ""; }
+    .descricao-modal p:nth-child(3)::before { content: ""; }
+    .descricao-modal p:nth-child(4)::before { content: ""; }
+    .descricao-modal p:nth-child(5)::before { content: ""; }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+    }
+.filme img {
+  width: 150px; /* tamanho padrão desktop, pode ajustar */
+  height: auto;
+  transition: width 0.3s ease;
+}
+
+/* Ajuste para telas pequenas (celulares) */
+@media (max-width: 600px) {
+  .filme img {
+    width: 90px; /* tamanho menor para celular */
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+ 
+ <header style="display: flex; flex-direction: column; align-items: flex-start; padding: 30px 0 10px 40px;">
+  <div class="logo" style="font-size: 24px; font-weight: bold;">CINEPOP</div>
+
+  <button onclick="history.back()" style="
+    background-color: #fff;
+    color: #000000;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 20px;
+    transition: background-color 0.3s, color 0.3s;
+  " onmouseover="this.style.backgroundColor='#c00'; this.style.color='#fff';"
+     onmouseout="this.style.backgroundColor='#fff'; this.style.color='#000';">
+    Voltar
+  </button>
+</header>
+
+
+ <div class="search-container" style="display: flex; align-items: center; gap: 8px;">
+  <input type="text" id="searchInput" placeholder="Buscar filmes..." onkeyup="buscarFilmes()" />
+
+  <button onclick="buscarFilmes()" style="
+    background: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* sombra leve opcional */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  </button>
+</div>
+
+
+  <section class="filmes-container" id="filmes">
+    <div class="filme" data-filme="moana">
+      <img src="moana.png" alt="Moana">
+      <div class="titulo-filme">Moana</div>
+    </div>
+  
+    <div class="filme" data-filme="shrek2">
+      <img src="shrek 2.png" alt="Shrek 2">
+      <div class="titulo-filme">Shrek 2</div>
+    </div>
+  
+    <div class="filme" data-filme="barbie">
+      <img src="barbie.png" alt="Barbie">
+      <div class="titulo-filme">Barbie</div>
+    </div>
+  
+    <div class="filme" data-filme="badboys">
+      <img src="bad boys 4.png" alt="Bad Boys">
+      <div class="titulo-filme">Bad Boys</div>
+    </div>
+  
+    <div class="filme" data-filme="minhaculpa">
+      <img src="culpa mia.png" alt="Minha Culpa">
+      <div class="titulo-filme">Minha Culpa</div>
+    </div>
+  
+    <div class="filme" data-filme="elementos">
+      <img src="elementos.png" alt="Elementos">
+      <div class="titulo-filme">Elementos</div>
+    </div>
+  
+    <div class="filme" data-filme="continencia">
+      <img src="continencia ao amor.png" alt="Continência do Amor">
+      <div class="titulo-filme">Continência do Amor</div>
+    </div>
+  
+    <div class="filme" data-filme="garotamimada">
+      <img src="garota mimada.png" alt="Garota Mimada">
+      <div class="titulo-filme">Garota Mimada</div>
+    </div>
+  
+    <div class="filme" data-filme="divertidamente">
+      <img src="divertidamente.png" alt="Divertidamente">
+      <div class="titulo-filme">Divertidamente</div>
+    </div>
+  
+    <div class="filme" data-filme="harrypotter">
+      <img src="harry potter.png" alt="Harry Potter">
+      <div class="titulo-filme">Harry Potter</div>
+    </div>
+  
+    <div class="filme" data-filme="luca">
+      <img src="luca.png" alt="Luca">
+      <div class="titulo-filme">Luca</div>
+    </div>
+  
+   <div class="filme" data-filme="homemaranhaverso">
+  <img src="homem aranha.png" alt="Homem-Aranha: Através do Aranhaverso">
+  <div class="titulo-filme">Homem-Aranha: Através do Aranhaverso</div>
+</div>
+
+  
+    <div class="filme" data-filme="vingadores">
+      <img src="Filme ultimato.png" alt="Vingadores: Ultimato">
+      <div class="titulo-filme">Vingadores: Ultimato</div>
+    </div>
+
+    <div class="filme" data-filme="aspatricinhas">
+      <img src="as patricinhas.png" alt="As patricinhas">
+      <div class="titulo-filme">As patricinhas</div>
+    </div>
+
+    
+    <div class="filme" data-filme="atravesdaminhajanela">
+      <img src="atraves da minha janela.png" alt="Através da minha janela">
+      <div class="titulo-filme">Através da minha janela</div>
+    </div>
+
+    
+    <div class="filme" data-filme="barbiepopstar">
+      <img src="barbie popstar.png" alt="Barbie popstar">
+      <div class="titulo-filme">Barbie: popstar</div>
+    </div>
+
+    <div class="filme" data-filme="bobesponja">
+      <img src="bob esponja o incrivel resgate.png" alt="bob esponja">
+      <div class="titulo-filme">Bob esponja: O incrivel resgate</div>
+    </div>
+
+    <div class="filme" data-filme="cortenotempo">
+  <img src="corte no tempo.png" alt="Corte no Tempo">
+  <div class="titulo-filme">Corte no Tempo</div>
+</div>
+
+
+    <div class="filme" data-filme="jumanjiproximo">
+      <img src="jumanji bem vindo.png" alt="Jumanji proximo nivel">
+      <div class="titulo-filme">Jumanji: Próximo nível</div>
+    </div>
+
+    <div class="filme" data-filme="meumalvadofavorito4">
+  <img src="meu malvado favorito 4.png" alt="Meu Malvado Favorito 4">
+  <div class="titulo-filme">Meu Malvado Favorito 4</div>
+</div>
+
+
+    <div class="filme" data-filme="reileao">
+      <img src="o rei leao.png" alt="O rei leão">
+      <div class="titulo-filme">O rei Leão</div>
+    </div>
+
+    <div class="filme" data-filme="procurandonemo">
+      <img src="procurando nemo.png" alt="Procurando nemo">
+      <div class="titulo-filme">Procurando Nemo</div>
+    </div>
+
+    <div class="filme" data-filme="toystrory">
+      <img src="toy strory 4.png" alt="Toy strory 4">
+      <div class="titulo-filme">Toy strory 4</div>
+    </div>
+
+    <div class="filme" data-filme="velozesefuriosos10">
+      <img src="Velozes e furiosos 10.png" alt="Velozes e furiosos 10">
+      <div class="titulo-filme">Velozes e furiosos 10</div>
+    </div>
+
+    <div class="filme" data-filme="velozesefuriosos7">
+      <img src="velozes e furiosos7.png" alt="Velozes e furiosos 7">
+      <div class="titulo-filme">Velozes e furiosos 7</div>
+    </div>
+
+    <div class="filme" data-filme="vingadoresguerra">
+      <img src="vingadores guerra infinita.png" alt="Vingadores guerra infinita">
+      <div class="titulo-filme">Vingadores: Guerra infinita</div>
+    </div>
+
+
+    <div class="filme" data-filme="aqueda">
+  <img src="a queda.png" alt="A Queda">
+  <div class="titulo-filme">A Queda</div>
+</div>
+
+<div class="filme" data-filme="diariodeumapaixao">
+  <img src="diario de uma paixão.jpg" alt="Diário de uma Paixão">
+  <div class="titulo-filme">Diário de uma Paixão</div>
+</div>
+
+<div class="filme" data-filme="2coracoes">
+  <img src="2 corações.png" alt="2 Corações">
+  <div class="titulo-filme">2 Corações</div>
+</div>
+
+<div class="filme" data-filme="cruella">
+  <img src="cruella.png" alt="Cruella">
+  <div class="titulo-filme">Cruella</div>
+</div>
+
+<div class="filme" data-filme="aindaestouaqui">
+  <img src="ainda estou aqui.png" alt="Ainda Estou Aqui">
+  <div class="titulo-filme">Ainda Estou Aqui</div>
+</div>
+
+<div class="filme" data-filme="viagem2">
+  <img src="viagem 2.png" alt="Viagem 2: A Ilha Misteriosa">
+  <div class="titulo-filme">Viagem 2: A Ilha Misteriosa</div>
+</div>
+
+<div class="filme" data-filme="fabricantedelagriamas">
+  <img src="o fabricante de lagrimas.png" alt="O Fabricante de Lágrimas">
+  <div class="titulo-filme">O Fabricante de Lágrimas</div>
+</div>
+
+<div class="filme" data-filme="esposadementirinha">
+  <img src="esposa de mentirinha.png" alt="Esposa de Mentirinha">
+  <div class="titulo-filme">Esposa de Mentirinha</div>
+</div>
+
+<div class="filme" data-filme="tudoporumpopstar">
+  <img src="tudo por um pop star.png" alt="Tudo por um Pop Star">
+  <div class="titulo-filme">Tudo por um Pop Star</div>
+</div>
+
+<div class="filme" data-filme="osfarofeiros">
+  <img src="os farofeiros.png" alt="Os Farofeiros">
+  <div class="titulo-filme">Os Farofeiros</div>
+</div>
+
+<div class="filme" data-filme="osfarofeiros2">
+  <img src="os farofeiros 2.png" alt="Os Farofeiros 2">
+  <div class="titulo-filme">Os Farofeiros 2</div>
+</div>
+
+<div class="filme" data-filme="cinderellaofilme">
+  <img src="cinderella.png" alt="Cinderela (o filme)">
+  <div class="titulo-filme">Cinderela</div>
+</div>
+
+<div class="filme" data-filme="alicepaismaravilhasofilme">
+  <img src="alice.png" alt="Alice no País das Maravilhas (o filme)">
+  <div class="titulo-filme">Alice no País das Maravilhas</div>
+</div>
+
+<div class="filme" data-filme="aliceespelhoofilme">
+  <img src="alice 2.png" alt="Alice Através do Espelho (o filme)">
+  <div class="titulo-filme">Alice Através do Espelho</div>
+</div>
+
+<div class="filme" data-filme="quatrolidasdeumcachorro">
+  <img src="quatro vidas de um cachorro.png" alt="Quatro Vidas de um Cachorro">
+  <div class="titulo-filme">Quatro Vidas de um Cachorro</div>
+</div>
+
+<div class="filme" data-filme="tropadeelite">
+  <img src="tropa de elite.png" alt="Tropa de Elite">
+  <div class="titulo-filme">Tropa de Elite</div>
+</div>
+
+
+
+
+  </section>
+  
+
+  <!-- Modal -->
+<div id="modalDescricao" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharModal()">&times;</span>
+    <h2 id="tituloModal"></h2>
+    <p><strong>Descrição:</strong> <span id="descricaoModal"></span></p>
+    <p><strong>Ano:</strong> <span id="anoModal"></span></p>
+    <p><strong>Diretor:</strong> <span id="diretorModal"></span></p>
+    <p><strong>Gênero:</strong> <span id="generoModal"></span></p>
+    <iframe id="trailerModal" src="" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+
+
+  
+<script>
+  const filmesInfo = {
+    aqueda: {
+      titulo: "A Queda",
+      descricao: "Baseado nos últimos dias de Adolf Hitler em seu bunker em Berlim.",
+      ano: "2004",
+      diretor: "Oliver Hirschbiegel",
+      genero: "Drama / História",
+      trailer: "https://www.youtube.com/embed/wkJH2z0cmXA" 
+    },
+    barbie: {
+      titulo: "Barbie",
+      descricao: "Barbie e Ken descobrem o mundo real fora da Barbielândia.",
+      ano: "2023",
+      diretor: "Greta Gerwig",
+      genero: "Comédia / Aventura",
+      trailer: "https://www.youtube.com/embed/8zIf0XvoL9Y"
+    },
+    moana: {
+    titulo: "Moana",
+    descricao: "Uma jovem navegadora parte em uma missão para salvar seu povo.",
+    ano: "2016",
+    diretor: "Ron Clements, John Musker",
+    genero: "Animação / Aventura",
+    trailer: "https://www.youtube.com/embed/LKFuXETZUsI"
+  },
+  shrek2: {
+    titulo: "Shrek 2",
+    descricao: "Shrek conhece os pais de Fiona e precisa provar que é digno de sua filha.",
+    ano: "2004",
+    diretor: "Andrew Adamson, Kelly Asbury, Conrad Vernon",
+    genero: "Animação / Comédia",
+    trailer: "https://www.youtube.com/embed/V6X5ti4YlG8"
+  },
+  barbie: {
+    titulo: "Barbie",
+    descricao: "Barbie e Ken embarcam numa jornada autodescoberta no mundo real.",
+    ano: "2023",
+    diretor: "Greta Gerwig",
+    genero: "Comédia / Fantasia",
+    trailer: "https://www.youtube.com/embed/pBk4NYhWNMM"
+  },
+  badboys: {
+    titulo: "Bad Boys para Sempre",
+    descricao: "Mike e Marcus enfrentam novos perigos e revelações do passado.",
+    ano: "2020",
+    diretor: "Adil El Arbi, Bilall Fallah",
+    genero: "Ação / Comédia",
+    trailer: "https://www.youtube.com/embed/jKCj3XuPG8M"
+  },
+  minhaculpa: {
+  titulo: "Minha Culpa",
+  descricao: "Noah se muda para uma nova cidade e se envolve em um relacionamento proibido.",
+  ano: "2023",
+  diretor: "Domingo González",
+  genero: "Drama / Romance",
+  trailer: "https://www.youtube.com/embed/EkOJWulrkO4"
+},
+
+  elementos: {
+  titulo: "Elementos",
+  descricao: "Em uma cidade onde fogo, água, terra e ar vivem juntos, uma improvável amizade floresce.",
+  ano: "2023",
+  diretor: "Peter Sohn",
+  genero: "Animação / Aventura",
+  trailer: "https://www.youtube.com/embed/BydjQP2aFd0"
+},
+
+ continencia: {
+  titulo: "Continência ao Amor",
+  descricao: "Uma musicista e um fuzileiro naval se casam por conveniência, mas se apaixonam de verdade.",
+  ano: "2022",
+  diretor: "Elizabeth Allen Rosenbaum",
+  genero: "Drama / Romance",
+  trailer: "https://www.youtube.com/embed/2yyzb9RDUgs"
+},
+
+  garotamimada: {
+  titulo: "Garota Mimada",
+  descricao: "Uma adolescente rica é enviada para um rígido colégio interno na Inglaterra.",
+  ano: "2008",
+  diretor: "Nick Moore",
+  genero: "Comédia / Drama",
+  trailer: "https://www.youtube.com/embed/FcLB7TBDRbU"
+},
+
+ divertidamente: {
+  titulo: "Divertida Mente",
+  descricao: "Dentro da mente de uma garota, cinco emoções lutam para guiá-la na vida.",
+  ano: "2015",
+  diretor: "Pete Docter, Ronnie del Carmen",
+  genero: "Animação / Aventura",
+  trailer: "https://www.youtube.com/embed/ukQeR3zYncw"
+},
+
+  harrypotter: {
+    titulo: "Harry Potter e a Pedra Filosofal",
+    descricao: "Um jovem bruxo descobre seu passado e enfrenta perigos em Hogwarts.",
+    ano: "2001",
+    diretor: "Chris Columbus",
+    genero: "Fantasia / Aventura",
+    trailer: "https://www.youtube.com/embed/VyHV0BRtdxo"
+  },
+  luca: {
+    titulo: "Luca",
+    descricao: "Durante um verão inesquecível, Luca compartilha aventuras com seu novo melhor amigo.",
+    ano: "2021",
+    diretor: "Enrico Casarosa",
+    genero: "Animação / Aventura",
+    trailer: "https://www.youtube.com/embed/mYfJxlgR2jw"
+  },
+  homemaranhaverso: {
+  titulo: "Homem-Aranha: Através do Aranhaverso",
+  descricao: "Miles Morales embarca em uma aventura épica pelo multiverso, unindo forças com outros Homens-Aranha para enfrentar uma ameaça poderosa.",
+  ano: "2023",
+  diretor: "Joaquim Dos Santos, Kemp Powers, Justin K. Thompson",
+  genero: "Animação / Ação / Aventura",
+  trailer: "https://www.youtube.com/embed/shW9i6k8cB0"
+},
+
+  vingadores: {
+    titulo: "Vingadores: Ultimato",
+    descricao: "Os Vingadores restantes tentam desfazer a destruição causada por Thanos.",
+    ano: "2019",
+    diretor: "Anthony e Joe Russo",
+    genero: "Ação / Ficção científica",
+    trailer: "https://www.youtube.com/embed/TcMBFSGVi1c"
+  },
+
+ aspatricinhas: {
+  titulo: "As Patricinhas de Beverly Hills",
+  descricao: "Uma adolescente rica de Beverly Hills tenta transformar colegas impopulares enquanto enfrenta seus próprios desafios amorosos.",
+  ano: "1995",
+  diretor: "Amy Heckerling",
+  genero: "Comédia / Romance",
+  trailer: "https://www.youtube.com/embed/9eJOE_s1ZaE"
+},
+
+  atravesdaminhajanela: {
+  titulo: "Através da Minha Janela",
+  descricao: "A paixão proibida entre vizinhos muda tudo em suas vidas.",
+  ano: "2022",
+  diretor: "Marçal Forés",
+  genero: "Romance",
+  trailer: "https://www.youtube.com/embed/aditICokASc"
+},
+
+
+  barbiepopstar: {
+  titulo: "Barbie: A Princesa e a Popstar",
+  descricao: "Barbie vive duas vidas: uma como princesa, outra como estrela pop.",
+  ano: "2012",
+  diretor: "Kenny Leon",
+  genero: "Animação / Musical",
+  trailer: "https://www.youtube.com/embed/Er3RONX96q4"
+},
+
+  bobesponja: {
+  titulo: "Bob Esponja: O Incrível Resgate",
+  descricao: "Bob Esponja parte em uma missão para salvar seu amigo Gary, que foi sequestrado.",
+  ano: "2020",
+  diretor: "Tim Hill",
+  genero: "Animação / Aventura",
+  trailer: "https://www.youtube.com/embed/NORzSapZfVc"
+},
+
+  cortenotempo: {
+  titulo: "Corte no Tempo",
+  descricao: "Uma adolescente viaja no tempo e vai parar no ano de 2003, dias antes de sua irmã ser assassinada. Será que ela vai mudar o passado ou destruir o futuro?",
+  ano: "2024",
+  diretor: "Hannah Macpherson",
+  genero: "Terror / Ficção Científica / Suspense",
+  trailer: "https://www.youtube.com/embed/Fh3r-XLjBfY"
+},
+
+  jumanjiproximo: {
+    titulo: "Jumanji: O Próximo Nível",
+    descricao: "Os amigos retornam a Jumanji para resgatar um companheiro e enfrentam novos desafios surpreendentes.",
+    ano: "2019",
+    diretor: "Jake Kasdan",
+    genero: "Aventura / Comédia",
+    trailer: "https://www.youtube.com/embed/rBxcF-r9Ibs"
+  },
+
+ meumalvadofavorito4: {
+  titulo: "Meu Malvado Favorito 4",
+  descricao: "Gru enfrenta um novo vilão enquanto lida com os desafios da paternidade e seus amados Minions.",
+  ano: "2024",
+  diretor: "Chris Renaud, Patrick Delage",
+  genero: "Animação / Comédia",
+  trailer: "https://www.youtube.com/embed/XEG0tWu9yKw"
+},
+
+  reileao: {
+    titulo: "O Rei Leão",
+    descricao: "O jovem leão Simba precisa encontrar seu destino como rei da savana após uma grande tragédia.",
+    ano: "2019",
+    diretor: "Jon Favreau",
+    genero: "Aventura / Drama",
+    trailer: "https://www.youtube.com/embed/7TavVZMewpY"
+  },
+
+  procurandonemo: {
+  titulo: "Procurando Nemo",
+  descricao: "Marlin, um peixe-palhaço, atravessa o oceano para encontrar seu filho Nemo, que foi capturado por mergulhadores.",
+  ano: "2003",
+  diretor: "Andrew Stanton",
+  genero: "Animação / Aventura",
+  trailer: "https://www.youtube.com/embed/oIb4tghqQD4"
+},
+
+ toystrory: {
+  titulo: "Toy Story 4",
+  descricao: "Woody e Buzz Lightyear embarcam em uma nova aventura para encontrar Forky, um brinquedo que se tornou um fugitivo.",
+  ano: "2019",
+  diretor: "Josh Cooley",
+  genero: "Animação / Aventura",
+  trailer: "https://www.youtube.com/embed/76CslX-q5C4"
+},
+
+ velozesefuriosos10: {
+  titulo: "Velozes & Furiosos 10",
+  descricao: "Dom Toretto e sua equipe enfrentam desafios extremos enquanto lutam para proteger suas famílias.",
+  ano: "2023",
+  diretor: "Justin Lin",
+  genero: "Ação / Aventura",
+  trailer: "https://www.youtube.com/embed/j7UFi_NlHCY"
+},
+
+
+  velozesefuriosos7: {
+    titulo: "Vingadores: Vingadores - Velozes 7",
+    descricao: "A família de Vingadores enfrenta uma luta final para salvar o mundo da destruição iminente.",
+    ano: "2015",
+    diretor: "James Wan",
+    genero: "Ação / Aventura",
+    trailer: "https://www.youtube.com/embed/tmeOjFno6Do"
+  },
+
+  vingadoresguerra: {
+  titulo: "Vingadores: Guerra Infinita",
+  descricao: "Os Vingadores tentam evitar que Thanos consiga todas as Joias do Infinito para destruir metade do universo.",
+  ano: "2018",
+  diretor: "Anthony e Joe Russo",
+  genero: "Ação / Aventura",
+  trailer: "https://www.youtube.com/embed/htQch8jDZ4s"
+},
+
+  aqueda: {
+  titulo: "A Queda",
+  descricao: "Uma experiência extrema de sobrevivência em uma torre abandonada no deserto.",
+  ano: "2022",
+  diretor: "Scott Mann",
+  genero: "Suspense / Aventura",
+  trailer: "https://www.youtube.com/embed/5J9C-4L0We8"
+},
+
+
+  diariodeumapaixao: {
+    titulo: "Diário de uma Paixão",
+    descricao: "Um amor que resiste ao tempo, contado por um homem a uma mulher em um asilo.",
+    ano: "2004",
+    diretor: "Nick Cassavetes",
+    genero: "Romance / Drama",
+    trailer: "https://www.youtube.com/embed/FC6biTjEyZw"
+  },
+
+ "2coracoes": {
+  titulo: "2 Corações",
+  descricao: "Duas histórias de amor que se conectam de maneira surpreendente.",
+  ano: "2020",
+  diretor: "Lance Hool",
+  genero: "Drama / Romance",
+  trailer: "https://www.youtube.com/embed/3BL17Za7VU4"
+},
+
+  cruella: {
+    titulo: "Cruella",
+    descricao: "A origem da icônica vilã Cruella de Vil em uma Londres rebelde.",
+    ano: "2021",
+    diretor: "Craig Gillespie",
+    genero: "Comédia / Crime / Drama",
+    trailer: "https://www.youtube.com/embed/gmRKv7n2If8"
+  },
+
+   aindaestouaqui: {
+   titulo: "Ainda Estou Aqui",
+   descricao: "Após a morte do namorado, Tessa começa a perceber sinais de sua presença.",
+   ano: "2022",
+   diretor: "Arie Posin",
+   genero: "Romance / Fantasia / Drama",
+   trailer: "[https://www.youtube.com/embed/ilSi\_1eAI2A](https://www.youtube.com/embed/ilSi_1eAI2A)"
+}, 
+
+  viagem2: {
+  titulo: "Viagem 2: A Ilha Misteriosa",
+  descricao: "Uma nova aventura em uma ilha cheia de mistérios e criaturas exóticas.",
+  ano: "2012",
+  diretor: "Brad Peyton",
+  genero: "Aventura / Fantasia / Família",
+  trailer: "https://www.youtube.com/embed/S33fMz2s8wM"
+},
+
+  fabricantedelagriamas: {
+  titulo: "O Fabricante de Lágrimas",
+  descricao: "Dois adolescentes criados no mesmo orfanato enfrentam emoções intensas ao se reencontrarem.",
+  ano: "2024",
+  diretor: "Alessandro Genovesi",
+  genero: "Romance / Drama",
+  trailer: "https://www.youtube.com/embed/-K5nksexHS8"
+},
+
+  esposadementirinha: {
+  titulo: "Esposa de Mentirinha",
+  descricao: "Um cirurgião convence sua assistente a fingir ser sua ex-esposa para impressionar uma garota.",
+  ano: "2011",
+  diretor: "Dennis Dugan",
+  genero: "Comédia / Romance",
+  trailer: "https://www.youtube.com/embed/8U5xQIK0xm8" 
+  },
+
+ tudoporumpopstar: {
+  titulo: "Tudo por um Pop Star",
+  descricao: "Três adolescentes fazem de tudo para conhecer sua banda favorita.",
+  ano: "2018",
+  diretor: "Bruno Garotti",
+  genero: "Comédia / Família",
+  trailer: "https://www.youtube.com/embed/yF7lR4o9i8Q"
+},
+
+osfarofeiros: {
+  titulo: "Os Farofeiros",
+  descricao: "Uma viagem de férias vira uma grande confusão entre amigos e familiares.",
+  ano: "2018",
+  diretor: "Roberto Santucci",
+  genero: "Comédia",
+  trailer: "https://www.youtube.com/embed/7XjO4NZ49S8"
+},
+
+  osfarofeiros2: {
+    titulo: "Os Farofeiros 2",
+    descricao: "Os mesmos amigos se metem em novas e ainda mais hilárias enrascadas nas férias.",
+    ano: "2024",
+    diretor: "Roberto Santucci",
+    genero: "Comédia",
+    trailer: "https://www.youtube.com/embed/9J9XzE9DwH0"
+  },
+
+  cinderellaofilme: {
+    titulo: "Cinderela",
+    descricao: "Após a morte de seu pai, Ella passa a viver com sua madrasta e enteadas, até que um baile muda tudo.",
+    ano: "2015",
+    diretor: "Kenneth Branagh",
+    genero: "Fantasia / Romance / Família",
+    trailer: "https://www.youtube.com/embed/20DF6U1HcGQ"
+  },
+  alicepaismaravilhasofilme: {
+    titulo: "Alice no País das Maravilhas",
+    descricao: "Alice volta ao mundo mágico da infância e descobre seu verdadeiro destino.",
+    ano: "2010",
+    diretor: "Tim Burton",
+    genero: "Fantasia / Aventura / Família",
+    trailer: "https://www.youtube.com/embed/9POCgSRVvf0"
+  },
+  aliceespelhoofilme: {
+    titulo: "Alice Através do Espelho",
+    descricao: "Alice retorna ao mundo fantástico para salvar o Chapeleiro Maluco.",
+    ano: "2016",
+    diretor: "James Bobin",
+    genero: "Fantasia / Aventura",
+    trailer: "https://www.youtube.com/embed/x3IWwnNe5mc"
+  },
+  quatrolidasdeumcachorro: {
+    titulo: "Quatro Vidas de um Cachorro",
+    descricao: "Um cão reencarna várias vezes e descobre o propósito de sua vida ao lado de seu dono original.",
+    ano: "2017",
+    diretor: "Lasse Hallström",
+    genero: "Drama / Família",
+    trailer: "https://www.youtube.com/embed/1jLOOCADTGs"
+  },
+
+  tropadeelite: {
+  titulo: "Tropa de Elite",
+  descricao: "Um capitão do BOPE enfrenta o crime nas favelas do Rio de Janeiro enquanto lida com a pressão da rotina e busca um substituto para sua posição.",
+  ano: "2007",
+  diretor: "José Padilha",
+  genero: "Ação / Drama / Policial",
+  trailer: "https://www.youtube.com/embed/Q3mGyh4p2RY"
+}
+
+
+
+};
+
+
+  document.querySelectorAll('.filme').forEach(filme => {
+    filme.addEventListener('click', function() {
+      const key = this.getAttribute('data-filme');
+      const info = filmesInfo[key];
+  
+      if (info) {
+        document.getElementById('tituloModal').textContent = info.titulo;
+        document.getElementById('descricaoModal').textContent = info.descricao;
+        document.getElementById('anoModal').textContent = info.ano;
+        document.getElementById('diretorModal').textContent = info.diretor;
+        document.getElementById('generoModal').textContent = info.genero;
+        document.getElementById('trailerModal').src = info.trailer;
+  
+        document.getElementById('modalDescricao').style.display = 'block';
+      }
+    });
+  });
+  
+  function fecharModal() {
+    document.getElementById('modalDescricao').style.display = 'none';
+    document.getElementById('trailerModal').src = ""; // Para parar o vídeo
+  }
+  
+  // Fechar clicando fora do modal
+  window.onclick = function(event) {
+    const modal = document.getElementById('modalDescricao');
+    if (event.target == modal) {
+      fecharModal();
+    }
+  }
+
+  function buscarFilmes() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const filmes = document.querySelectorAll('.filme');
+  
+      filmes.forEach(filme => {
+        const titulo = filme.querySelector('.titulo-filme').textContent.toLowerCase();
+        if (titulo.includes(input)) {
+          filme.style.display = "block";
+        } else {
+          filme.style.display = "none";
+        }
+      });
+    }
+  </script>
+  
+</body>
+</html>

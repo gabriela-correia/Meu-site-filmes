@@ -1,0 +1,12 @@
+.filmes-page {
+    padding: 40px;
+    background-color: #111;
+    color: white;
+    text-align: center;
+  }
+  .filmes-page img {
+    margin: 10px;
+    border-radius: 10px;
+    max-width: 180px;
+  }
+  
